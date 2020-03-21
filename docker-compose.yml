@@ -1,0 +1,23 @@
+version: '3.1'
+services: 
+    
+    postgres-service:
+        container_name: bankaccount-postgres
+        ports: 
+            - "5432:5432"
+        image: postgres
+        volumes:
+            - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+        environment: 
+            - POSTGRES_USER=postgres
+            - POSTGRES_DB=postgres
+            - POSTGRES_PASSWORD=postgres
+
+    mongodb-service:
+        container_name: bankaccount-mongo
+        ports: 
+            - "27017:27017"
+        image: mongo
+        environment: 
+            - MONGO_INITDB_ROOT_USERNAME=bankaccount
+            - MONGO_INITDB_ROOT_PASSWORD=bankaccount
