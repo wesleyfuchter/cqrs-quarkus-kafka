@@ -4,6 +4,8 @@ import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped class TransactionsImpl: Transactions {
 
-    override fun hello(): String = "hello from service"
+    override fun create(transaction: Transaction): Transaction {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
 }
