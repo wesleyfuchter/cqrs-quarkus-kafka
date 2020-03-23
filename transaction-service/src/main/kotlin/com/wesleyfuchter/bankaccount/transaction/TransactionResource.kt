@@ -10,8 +10,4 @@ class TransactionResource(
         private val transactions: Transactions
 ) {
 
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    fun hello() = transactions.hello()
-
 }
