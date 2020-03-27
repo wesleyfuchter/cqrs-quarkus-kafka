@@ -22,7 +22,7 @@ class TransactionResource(
     @Transactional
     fun add(@Valid transaction: Transaction): Response =
             transactions.add(transaction).let {
-                Response.created(URI("/transactions/" + it.id)).entity(it).build()
+                Response.created(URI("/transactions/${it.id}")).entity(it).build()
             }
 
 }
