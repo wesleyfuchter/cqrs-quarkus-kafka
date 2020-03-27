@@ -17,7 +17,7 @@ class Transaction(
         @GeneratedValue(generator = "UUID")
         @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
         @Column(name = "id", updatable = false, nullable = false)
-        var id: String,
+        var id: String = "",
 
         @Column(name = "account_id")
         var accountId: String,

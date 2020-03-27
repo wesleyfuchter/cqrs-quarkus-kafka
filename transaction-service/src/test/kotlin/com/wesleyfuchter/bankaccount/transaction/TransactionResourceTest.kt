@@ -2,19 +2,28 @@ package com.wesleyfuchter.bankaccount.transaction
 
 import io.quarkus.test.junit.QuarkusTest
 import io.restassured.RestAssured.given
-import org.hamcrest.CoreMatchers.`is`
 import org.junit.jupiter.api.Test
+import io.restassured.http.ContentType
+import org.hamcrest.CoreMatchers.notNullValue
+import javax.json.bind.JsonbBuilder
 
 @QuarkusTest
-open class TransactionResourceTest {
+class TransactionResourceTest {
 
     @Test
-    fun testHelloEndpoint() {
+    fun testSaveUser() {
         given()
-          .`when`().get("/transaction")
-          .then()
-             .statusCode(200)
-             .body(`is`("hello from service"))
+            .contentType(ContentType.JSON)
+            .body(JsonbBuilder.create().toJson(mapOf(
+                    "description" to "salary",
+                    "accountId" to "test$123",
+                    "type" to "INCOME",
+                    "value" to 100.0))
+            )
+            .`when`().post("/transactions")
+            .then()
+            .statusCode(201)
+            .body("id", notNullValue())
     }
 
 }
