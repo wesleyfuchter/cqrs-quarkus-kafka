@@ -9,12 +9,14 @@ import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
 @Path("/balance")
-class BalanceResource {
+class BalanceResource(
+        private val balances: Balances
+) {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    fun forAccount(@QueryParam("accountId") accountId: String): Response =
-            Response.ok().build()
+    fun findByAccountId(@QueryParam("accountId") accountId: String): Response =
+            Response.ok(balances.findByAccountId(accountId)).build()
 
 }
