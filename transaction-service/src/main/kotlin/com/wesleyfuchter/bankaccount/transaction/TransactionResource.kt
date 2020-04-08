@@ -13,7 +13,8 @@ import javax.ws.rs.core.Response
 
 @Path("/transactions")
 class TransactionResource(
-        private val transactions: Transactions
+        private val transactions: Transactions,
+        private val transactionProducer: TransactionProducer
 ) {
 
     @POST
@@ -22,6 +23,7 @@ class TransactionResource(
     @Transactional
     fun add(@Valid transaction: Transaction): Response =
             transactions.add(transaction).let {
+                transactionProducer.produce(it)
                 Response.created(URI("/transactions/${it.id}")).entity(it).build()
             }
 
