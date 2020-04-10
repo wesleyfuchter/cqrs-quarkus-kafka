@@ -8,4 +8,6 @@ interface Balances {
 
     fun findByAccountId(accountId: String): Balance?
 
+    fun updateBalance(transaction: Transaction): Balance
+
 }

@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoCollection
 import javax.enterprise.context.ApplicationScoped
 import com.mongodb.client.model.Filters.eq
+import java.time.LocalDateTime
 import java.util.UUID
 
 @ApplicationScoped class BalancesImpl(
@@ -26,4 +27,31 @@ import java.util.UUID
     private fun collection(): MongoCollection<Balance> = client.getDatabase("bankaccount")
             .getCollection("balances", Balance::class.java)
 
+
+    override fun updateBalance(transaction: Transaction): Balance =
+            transaction.let {
+
+                val currentBalance = findByAccountId(transaction.accountId) ?: Balance(
+                        accountId = transaction.accountId,
+                        value = 0.0)
+
+                val balanceValue =
+                        if (transaction.type == TransactionType.INCOME)
+                            currentBalance.value + transaction.value
+                        else
+                            currentBalance.value - transaction.value
+
+                val balance = currentBalance.copy(accountId = transaction.accountId, value = balanceValue)
+
+                if (balance._id == null) {
+
+                    add(balance)
+
+                } else {
+
+                    set(balance)
+
+                }
+
+            }
 }
