@@ -1,8 +1,23 @@
 package com.wesleyfuchter.bankaccount.balance
 
-@MongoEntity
+import io.quarkus.mongodb.panache.MongoEntity
+import org.bson.types.ObjectId
+
+@MongoEntity(collection = "balances")
 data class Balance (
-        val _id: String? = null,
-        val accountId: String,
-        val value: Double
-)
+        var id: ObjectId? = null,
+        var accountId: String,
+        var value: Double
+) {
+
+    companion object {
+
+        @JvmStatic fun defaultInstance(accountId: String): Balance =
+                Balance(
+                    accountId = accountId,
+                    value = 0.0
+                )
+
+    }
+
+}

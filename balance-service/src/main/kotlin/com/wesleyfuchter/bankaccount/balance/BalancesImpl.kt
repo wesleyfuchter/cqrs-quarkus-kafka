@@ -1,39 +1,28 @@
 package com.wesleyfuchter.bankaccount.balance
 
 import com.mongodb.client.MongoClient
-import com.mongodb.client.MongoCollection
+import io.quarkus.mongodb.panache.PanacheMongoEntity
+import io.quarkus.mongodb.panache.PanacheMongoRepository
 import javax.enterprise.context.ApplicationScoped
-import com.mongodb.client.model.Filters.eq
-import java.time.LocalDateTime
-import java.util.UUID
 
 @ApplicationScoped class BalancesImpl(
         private val client: MongoClient
-): Balances {
+): Balances, PanacheMongoRepository<Balance> {
 
-    override fun add(balance: Balance): Balance =
-            balance.copy(_id = UUID.randomUUID().toString()).also {
-                collection().insertOne(it)
-            }
-
-    override fun set(balance: Balance): Balance =
+    override fun saveOrUpdate(balance: Balance): Balance =
             balance.also {
-                collection().replaceOne(eq("_id", balance._id), it)
+                persistOrUpdate(balance)
             }
 
     override fun findByAccountId(accountId: String): Balance? =
-            collection().find(eq("accountId", accountId)).first()
-
-    private fun collection(): MongoCollection<Balance> = client.getDatabase("bankaccount")
-            .getCollection("balances", Balance::class.java)
-
+            find("accountId", accountId).firstResult()
 
     override fun updateBalance(transaction: Transaction): Balance =
             transaction.let {
 
-                val currentBalance = findByAccountId(transaction.accountId) ?: Balance(
-                        accountId = transaction.accountId,
-                        value = 0.0)
+                val currentBalance =
+                        findByAccountId(transaction.accountId) ?:
+                        Balance.defaultInstance(transaction.accountId)
 
                 val balanceValue =
                         if (transaction.type == TransactionType.INCOME)
@@ -43,15 +32,7 @@ import java.util.UUID
 
                 val balance = currentBalance.copy(accountId = transaction.accountId, value = balanceValue)
 
-                if (balance._id == null) {
-
-                    add(balance)
-
-                } else {
-
-                    set(balance)
-
-                }
+                saveOrUpdate(balance)
 
             }
 }

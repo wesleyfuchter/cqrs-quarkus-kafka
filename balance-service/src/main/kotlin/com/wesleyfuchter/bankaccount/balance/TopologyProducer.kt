@@ -38,7 +38,7 @@ import javax.enterprise.inject.Produces
 
                     val balance = balances.updateBalance(transaction)
 
-                    println(balance._id)
+                    println(balance.id)
 
                 }
 
