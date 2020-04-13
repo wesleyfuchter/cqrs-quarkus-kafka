@@ -10,10 +10,13 @@ import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
+import org.eclipse.microprofile.reactive.messaging.Channel
+import org.eclipse.microprofile.reactive.messaging.Emitter
+
 @Path("/transactions")
 class TransactionResource(
         private val transactions: Transactions,
-        private val transactionEmitter: TransactionEmitter
+        @Channel("transactions") private val emitter: Emitter<Transaction>
 ) {
 
     @POST
@@ -22,7 +25,7 @@ class TransactionResource(
     @Transactional
     fun add(@Valid transaction: Transaction): Response =
             transactions.add(transaction).let {
-                transactionEmitter.send(it)
+                emitter.send(it)
                 Response.created(URI("/transactions/${it.id}")).entity(it).build()
             }
 

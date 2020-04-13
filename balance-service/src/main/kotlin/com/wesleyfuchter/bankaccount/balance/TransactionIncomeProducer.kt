@@ -1,7 +1,5 @@
 package com.wesleyfuchter.bankaccount.balance
 
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonSerializer
 import io.vertx.core.json.JsonObject
 import io.vertx.kafka.client.serialization.JsonObjectDeserializer
 import io.vertx.kafka.client.serialization.JsonObjectSerializer
@@ -9,23 +7,22 @@ import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.kstream.Consumed
+import java.util.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Produces
 
-@ApplicationScoped class TopologyProducer(
+@ApplicationScoped class TransactionIncomeProducer(
         private val balances: Balances
 ) {
 
+    private val log = Logger.getLogger("TransactionIncomeProducer")
 
     @Produces fun buildTopology(): Topology {
         val builder = StreamsBuilder()
-
         builder.stream("transactions", Consumed.with(Serdes.String(),
                 Serdes.serdeFrom(JsonObjectSerializer(), JsonObjectDeserializer())))
                 .foreach { _, value: JsonObject ->
-
                     val transactionAsMap = value.map
-
                     val transaction = Transaction(
                             id = transactionAsMap["id"] as String,
                             accountId = transactionAsMap["accountId"] as String,
@@ -33,15 +30,9 @@ import javax.enterprise.inject.Produces
                             value = transactionAsMap["value"] as Double,
                             type = TransactionType.valueOf(transactionAsMap["type"] as String)
                     )
-
-                    println(transaction.accountId)
-
-                    val balance = balances.updateBalance(transaction)
-
-                    println(balance.id)
-
+                    log.info("Receiving transaction with description ${transaction.description}")
+                    balances.updateBalance(transaction)
                 }
-
         return builder.build()
     }
 

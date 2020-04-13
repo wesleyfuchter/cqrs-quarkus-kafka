@@ -2,7 +2,6 @@ package com.wesleyfuchter.bankaccount.balance
 
 import io.quarkus.test.junit.QuarkusTest
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @QuarkusTest
