@@ -1,5 +1,6 @@
 package com.wesleyfuchter.bankaccount.transaction
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase
 import org.hibernate.annotations.GenericGenerator
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -31,7 +32,7 @@ class Transaction(
         @Column
         var value: Double
 
-)
+): PanacheEntityBase()
 
 enum class TransactionType {
     INCOME, EXPENSE

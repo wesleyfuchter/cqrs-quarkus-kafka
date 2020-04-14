@@ -10,14 +10,10 @@ import javax.enterprise.context.ApplicationScoped
 @ApplicationScoped
 class TransactionOutgoingProducer {
 
-    private val log = Logger.getLogger("TransactionOutgoingProducer")
-
     @Incoming("transactions")
     @Outgoing("transactions")
-    fun producer(transaction: Transaction): KafkaRecord<String, Transaction> =
-            KafkaRecord.of(UUID.randomUUID().toString(), transaction).also {
-                log.info("Sending transaction with description ${transaction.description}")
-            }
+    fun produce(transaction: Transaction): KafkaRecord<String, Transaction> =
+            KafkaRecord.of(UUID.randomUUID().toString(), transaction)
 
 }
 
