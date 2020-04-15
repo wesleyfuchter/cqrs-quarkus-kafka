@@ -11,27 +11,23 @@ import java.util.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Produces
 
-@ApplicationScoped class TransactionIncomeProducer(
+@ApplicationScoped
+class TransactionIncomeProducer(
         private val balances: Balances
 ) {
 
     private val log = Logger.getLogger("TransactionIncomeProducer")
 
-    @Produces fun buildTopology(): Topology {
+    @Produces
+    fun onTransactionTopology(): Topology {
         val builder = StreamsBuilder()
-        builder.stream("transactions", Consumed.with(Serdes.String(),
-                Serdes.serdeFrom(JsonObjectSerializer(), JsonObjectDeserializer())))
+        builder.stream("transactions",
+                Consumed.with(Serdes.String(),
+                        Serdes.serdeFrom(JsonObjectSerializer(), JsonObjectDeserializer())))
                 .foreach { _, value: JsonObject ->
-                    val transactionAsMap = value.map
-                    val transaction = Transaction(
-                            id = transactionAsMap["id"] as String,
-                            accountId = transactionAsMap["accountId"] as String,
-                            description = transactionAsMap["description"] as String,
-                            value = transactionAsMap["value"] as Double,
-                            type = TransactionType.valueOf(transactionAsMap["type"] as String)
-                    )
+                    val transaction = Transaction.ofMap(value.map)
                     log.info("Receiving transaction with description ${transaction.description}")
-                    balances.updateBalance(transaction)
+                    balances.recalculate(transaction)
                 }
         return builder.build()
     }

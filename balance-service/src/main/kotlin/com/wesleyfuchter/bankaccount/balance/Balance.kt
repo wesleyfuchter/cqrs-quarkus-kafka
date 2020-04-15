@@ -10,6 +10,13 @@ data class Balance (
         var value: Double
 ) {
 
+    fun recalculate(transaction: Transaction) =
+            copy(accountId = transaction.accountId, value =
+                if (transaction.type == TransactionType.INCOME)
+                    this.value + transaction.value
+                else
+                    this.value - transaction.value)
+
     companion object {
 
         @JvmStatic fun defaultInstance(accountId: String): Balance =

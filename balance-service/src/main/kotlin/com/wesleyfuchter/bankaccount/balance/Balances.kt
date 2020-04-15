@@ -6,6 +6,6 @@ interface Balances {
 
     fun findByAccountId(accountId: String): Balance?
 
-    fun updateBalance(transaction: Transaction): Balance
+    fun recalculate(transaction: Transaction): Balance
 
 }
