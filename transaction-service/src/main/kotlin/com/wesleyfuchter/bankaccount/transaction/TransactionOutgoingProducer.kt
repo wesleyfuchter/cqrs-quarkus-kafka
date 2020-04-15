@@ -4,7 +4,6 @@ import io.smallrye.reactive.messaging.kafka.KafkaRecord
 import org.eclipse.microprofile.reactive.messaging.Incoming
 import org.eclipse.microprofile.reactive.messaging.Outgoing
 import java.util.*
-import java.util.logging.Logger
 import javax.enterprise.context.ApplicationScoped
 
 @ApplicationScoped
