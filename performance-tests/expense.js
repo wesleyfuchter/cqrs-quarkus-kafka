@@ -1,23 +1,19 @@
 import http from 'k6/http';
 import {check, sleep} from 'k6';
 
-export default function() {
-  var url = 'http://localhost:8080/transactions';
-  var payload = JSON.stringify({
-	accountId: "wesley",
-	description: "New Bike",
-	type: "EXPENSE",
-	value: 100
-  });
+const expensePayload = JSON.parse(open("../expense-transaction.json"));
 
-  var params = {
+export default function() {
+  const url = 'http://localhost:8080/transactions';
+
+  const params = {
 	headers: {
 	  'Content-Type': 'application/json',
 	},
   };
 
-  let res = http.post(url, payload, params);
+  const res = http.post(url, JSON.stringify(expensePayload), params);
 
-  check(res, { 'success creating income': (r) => r.status === 201 });
-  sleep(0.3);
+  check(res, { 'success creating expense': (r) => r.status === 201 });
+  sleep(1);
 }
