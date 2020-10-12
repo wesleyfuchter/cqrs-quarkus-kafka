@@ -1,7 +1,7 @@
 ## About CQRS - Command Query Responsibility Segregation
 
-According with [Martin Folwer](https://martinfowler.com/bliki/CQRS.html) 
-> At its heart is the notion that you can use a different model to update information than the model you use to read information. 
+According with [Martin Folwer](https://martinfowler.com/bliki/CQRS.html)
+> At its heart is the notion that you can use a different model to update information than the model you use to read information.
 > For some situations, this separation can be valuable, but beware that for most systems CQRS adds risky complexity.
 
 ## The application
@@ -17,7 +17,16 @@ docker-compose up -d --build
 ```
 It will deploy four docker containers on your environment with MongoDB, PostgreSQL, Kafka and Zookepper (required by Kafka)
 
-After deploying Kafka, you'll need to [create the topic on the Kafka cluster](https://kafka.apache.org/quickstart).
+After deploying Kafka, you'll need to [create the topic on the Kafka cluster](https://kafka.apache.org/quickstart). For example:
+
+```
+docker exec -it bankaccount-kafka \
+  ./bin/kafka-topics.sh --create \
+  --topic transactions \
+  --zookeeper bankaccount-zookeeper:2181 \
+  --replication-factor 1 \
+  --partitions 1
+```
 
 ## Testing the application
 
